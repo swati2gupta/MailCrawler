@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class CrawlerPage {
+public class PageParser {
 
 	
 	private Document htmlDocument;
@@ -34,7 +34,7 @@ public class CrawlerPage {
 	public boolean searhForMail(String searchWord) {
 		String patternToMatch = searchWord;
 		String htmlString = htmlDocument.toString();
-		// System.out.println("document" + htmlString);
+		//System.out.println("document" + htmlString);
 		IMailFilter filter = new DateBasedFilter();
 		return (filter.evaluate(patternToMatch, htmlString));
 	}

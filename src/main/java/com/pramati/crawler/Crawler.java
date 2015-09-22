@@ -12,7 +12,7 @@ public class Crawler {
 	public void search(String url, String keyword) {
 		do {
 			String currentUrl;
-			CrawlerPage crawlPage = new CrawlerPage();
+			PageParser crawlPage = new PageParser();
 			if (this.pagesToVisit.isEmpty()) {
 				currentUrl = url;
 				this.pagesVisited.add(url);
