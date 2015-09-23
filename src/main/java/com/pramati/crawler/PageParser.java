@@ -11,32 +11,42 @@ import org.jsoup.select.Elements;
 
 public class PageParser {
 
-	
-	private Document htmlDocument;
+	public Document getHtmlDoc(String url) throws IOException {
+		Document document = Jsoup.connect(url).get();
+		return document;
+	}
 
 	public List<String> crawl(String url) {
 		List<String> links = new LinkedList<String>();
 		try {
-			Document document = Jsoup.connect(url).get();
-			// String patternToMatch="ESMTP id [a-zA-Z0-9]+";
-			this.htmlDocument = document;
-			Elements linksOnPage = htmlDocument.select("a[href]");
+			Elements linksOnPage = getHtmlDoc(url).select("a[href]");
 			System.out.println("Found (" + linksOnPage.size() + ") links");
 			for (Element link : linksOnPage) {
 				links.add(link.absUrl("href"));
 			}
 		} catch (IOException ioe) {
-			//return false;
+			System.out.println(ioe);
 		}
 		return links;
 	}
 
-	public boolean searhForMail(String searchWord) {
-		String patternToMatch = searchWord;
-		String htmlString = htmlDocument.toString();
-		//System.out.println("document" + htmlString);
-		IMailFilter filter = new DateBasedFilter();
-		return (filter.evaluate(patternToMatch, htmlString));
+	public boolean searhForMail(String url,String searchWord) {
+		boolean result = false;
+		try {
+			String patternToMatch = searchWord;
+			String htmlString = getHtmlDoc(url).toString();
+			// System.out.println("document" + htmlString);
+			IMailFilter filter = new DateBasedFilter();
+			if (filter.evaluate(patternToMatch, htmlString))
+				{
+				System.out.println("keyword found");
+				result=true;
+				}
+			} 		
+			catch (IOException ioe) 
+				{
+			System.out.println(ioe);
+				}
+		return result;
 	}
-
 }

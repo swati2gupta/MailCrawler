@@ -20,9 +20,9 @@ public class Crawler {
 				currentUrl = this.nextUrl();
 			}
 			this.pagesToVisit.addAll(crawlPage.crawl(currentUrl));
-			boolean success = crawlPage.searhForMail(keyword);
+			boolean success = crawlPage.searhForMail(currentUrl,keyword);
 			if (success) {
-				String libFile = "/home/swatig/Desktop/mail2014";
+				String libFile = "/home/swatig/Desktop/mails-"+keyword+ currentUrl.substring(currentUrl.indexOf("%3C")+1,currentUrl.indexOf("%3E")-10);
 				Download mail = new DownloadFile();
 				mail.downloadMail(currentUrl, libFile, ".txt");
 
