@@ -2,7 +2,7 @@ package com.pramati.crawler;
 
 import java.util.Scanner;
 
-public class TestCrawler {
+public class StartCrawler {
 
 	public static void main(String args[]) {
 		System.out.println("Enter the URl to Parse");
