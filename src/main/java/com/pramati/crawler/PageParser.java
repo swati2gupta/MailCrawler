@@ -12,8 +12,7 @@ import org.apache.log4j.Logger;
 
 public class PageParser {
 	
-	final static Logger logger = Logger.getLogger(PageParser.class.getName());
-	
+	final static Logger logger = Logger.getLogger(PageParser.class);
 	public Document getHtmlDoc(String url) throws IOException {
 		Document document = Jsoup.connect(url).get();
 		return document;
@@ -23,8 +22,8 @@ public class PageParser {
 		List<String> links = new LinkedList<String>();
 		try {
 			Elements linksOnPage = getHtmlDoc(url).select("a[href]");
-			logger.debug("This is debug : " + linksOnPage.size() + ") links");
 			System.out.println("Found (" + linksOnPage.size() + ") links");
+			logger.debug("This is debug : " + linksOnPage.size() + ") links");
 			for (Element link : linksOnPage) {
 				links.add(link.absUrl("href"));
 			}
