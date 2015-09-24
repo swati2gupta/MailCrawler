@@ -1,14 +1,19 @@
 package com.pramati.crawler;
 
 import java.util.HashSet;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import java.util.Properties;
+
 public class Crawler {
 	private Set<String> pagesVisited = new HashSet<String>();
 	private List<String> pagesToVisit = new LinkedList<String>();
-
+	final static Logger logger = Logger.getLogger(Crawler.class);
+	Properties configFile = new Properties();
 	public void search(String url, String keyword) {
 		do {
 			String currentUrl;
@@ -19,17 +24,28 @@ public class Crawler {
 			} else {
 				currentUrl = this.nextUrl();
 			}
+			logger.debug("Current url:"+currentUrl);
 			this.pagesToVisit.addAll(crawlPage.crawl(currentUrl));
 			boolean success = crawlPage.searhForMail(currentUrl,keyword);
 			if (success) {
-				String libFile = "/home/swatig/Desktop/mails-"+keyword+ currentUrl.substring(currentUrl.indexOf("%3C")+1,currentUrl.indexOf("%3E")-10);
+				try
+				{
+				configFile.load(Crawler.class.getClassLoader().getResourceAsStream("config.properties"));
+				String dpath = configFile.getProperty("downloadPath");
+				String libFile = dpath+keyword+ currentUrl.substring(currentUrl.indexOf("%3C")+1,currentUrl.indexOf("%3E")-10);
 				Download mail = new DownloadFile();
 				mail.downloadMail(currentUrl, libFile, ".txt");
+				}
+				catch(Exception e)
+				{
+					logger.debug("Exception" +e);
+				}
+			
 
 			}
 			
 
-			System.out.println("\n**Done** Visited " + this.pagesVisited.size()
+			logger.debug("\n**Done** Visited " + this.pagesVisited.size()
 					+ " web page(s)");
 		} while (!this.pagesToVisit.isEmpty());
 

@@ -3,6 +3,7 @@ package com.pramati.crawler;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,7 +12,7 @@ import org.jsoup.select.Elements;
 import org.apache.log4j.Logger;
 
 public class PageParser {
-	
+	Properties configFile = new Properties();
 	final static Logger logger = Logger.getLogger(PageParser.class);
 	public Document getHtmlDoc(String url) throws IOException {
 		Document document = Jsoup.connect(url).get();
@@ -21,14 +22,20 @@ public class PageParser {
 	public List<String> crawl(String url) {
 		List<String> links = new LinkedList<String>();
 		try {
+			configFile.load(Crawler.class.getClassLoader().getResourceAsStream("config.properties"));
+			String domain = configFile.getProperty("domain");
 			Elements linksOnPage = getHtmlDoc(url).select("a[href]");
-			System.out.println("Found (" + linksOnPage.size() + ") links");
-			logger.debug("This is debug : " + linksOnPage.size() + ") links");
+			logger.debug("Links found on current page: " + linksOnPage.size() + ") links");
 			for (Element link : linksOnPage) {
+				if(link.absUrl("href").toLowerCase().contains(domain.toLowerCase())
+
+)
+				{
 				links.add(link.absUrl("href"));
+				}
 			}
 		} catch (IOException ioe) {
-			System.out.println(ioe);
+			logger.debug("Exception:"+ioe);
 		}
 		return links;
 	}
@@ -41,11 +48,11 @@ public class PageParser {
 			// System.out.println("document" + htmlString);
 			IMailFilter filter = new DateBasedFilter();
 			if (filter.evaluate(patternToMatch, htmlString)) {
-				System.out.println("keyword found");
+				logger.debug("keyword found in the page");
 				result = true;
 			}
 		} catch (IOException ioe) {
-			System.out.println(ioe);
+			logger.debug("Exception:"+ioe);
 		}
 		return result;
 	}

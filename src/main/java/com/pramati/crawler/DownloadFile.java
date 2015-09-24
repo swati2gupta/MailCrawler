@@ -2,8 +2,10 @@ package com.pramati.crawler;
 import java.io.*;
 import java.net.URL;
 
-public class DownloadFile implements Download {
+import org.apache.log4j.Logger;
 
+public class DownloadFile implements Download {
+	final static Logger logger = Logger.getLogger(DownloadFile.class);
 	public void downloadMail(String url, String pathg, String format) {
 		{
 			BufferedInputStream in = null;
@@ -19,7 +21,7 @@ public class DownloadFile implements Download {
 					fout.write(data, 0, count);
 				}
 			} catch (Exception e) {
-				System.out.println("Cannot download file : " + format+e);
+				logger.debug("Cannot download file : " + format+e);
 			} finally {
 				if (in != null)
 					try {
@@ -33,7 +35,7 @@ public class DownloadFile implements Download {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				System.out.println("File " + format
+				logger.debug("File " + format
 						+ " downloaded successfully");
 			}
 		}
