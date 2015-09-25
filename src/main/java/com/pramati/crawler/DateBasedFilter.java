@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class DateBasedFilter implements IMailFilter {
 
 	public Boolean evaluate(String regex, String content) {
-		//String mailRegex="mailto:(.*)";
+		
 		String dateRegex="Date:(.*)"+regex;
 		Pattern pattern = Pattern.compile(dateRegex);
 		Matcher matcher = pattern.matcher(content);

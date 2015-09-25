@@ -21,7 +21,7 @@ public class DownloadFile implements Download {
 					fout.write(data, 0, count);
 				}
 			} catch (Exception e) {
-				logger.debug("Cannot download file : " + format+e);
+				logger.error("Cannot download file : " ,e);
 			} finally {
 				if (in != null)
 					try {
@@ -35,7 +35,7 @@ public class DownloadFile implements Download {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				logger.debug("File " + format
+				logger.debug("File " +pathg+ format
 						+ " downloaded successfully");
 			}
 		}
