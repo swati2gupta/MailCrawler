@@ -35,7 +35,7 @@ public class DownloadFile implements Download {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				logger.debug("File " +pathg+ format
+				logger.debug("File  for url "+url +pathg+ format
 						+ " downloaded successfully");
 			}
 		}

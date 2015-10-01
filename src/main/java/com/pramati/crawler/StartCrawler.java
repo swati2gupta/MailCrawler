@@ -12,7 +12,7 @@ public class StartCrawler {
 		String URL = scanner.next();
 		Crawler mailcrawl = new Crawler();
 		mailcrawl.search(URL, "2014");
-
+		scanner.close();
 	}
 
 }
