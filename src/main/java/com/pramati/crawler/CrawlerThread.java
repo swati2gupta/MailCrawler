@@ -1,28 +1,30 @@
 package com.pramati.crawler;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class CrawlerThread implements Runnable {
-	protected BlockingQueue<String> pagesToVisit = null;
-	protected BlockingQueue<String> pagesVisited = null;
+	protected static BlockingQueue<String> pagesToVisit = null;
+	protected static BlockingQueue<String> downloadQueue = null;
+	protected static Set<String> pagesVisited = null;
 	final static Logger logger = Logger.getLogger(Crawler.class);
-	Properties configFile = new Properties();
 
 	public CrawlerThread(BlockingQueue<String> urlQueue,
-			BlockingQueue<String> visitedQueue) {
-		this.pagesToVisit = urlQueue;
-		this.pagesVisited = visitedQueue;
-
+			Set<String> visitedQueue, BlockingQueue<String> downlQueue) {
+		pagesToVisit = urlQueue;
+		pagesVisited = visitedQueue;
+		downloadQueue = downlQueue;
 	}
 
 	public void run() {
 		try {
 			String currentUrl = pagesToVisit.take();
+			pagesVisited.add(currentUrl);
 			search(currentUrl, "2014");
 		} catch (Exception e) {
 			logger.error("Exception in getting the next URl", e);
@@ -41,24 +43,14 @@ public class CrawlerThread implements Runnable {
 					logger.debug("search for mail true or false" + success);
 					if (success) {
 						try {
-							configFile.load(Crawler.class.getClassLoader()
-									.getResourceAsStream("config.properties"));
-							String dpath = configFile
-									.getProperty("downloadPath");
-							String libFile = dpath
-									+ keyword
-									+ currentUrl.substring(
-											currentUrl.indexOf("@") - 15,
-											currentUrl.indexOf("@") - 3);
-							Download mail = new DownloadFile();
-							mail.downloadMail(currentUrl, libFile, ".txt");
+							downloadQueue.add(currentUrl);
 						} catch (Exception e) {
 							logger.error(
 									"Exception in opening properties file", e);
 						}
 
 					} else {
-						this.pagesToVisit.addAll(crawlPage.crawl(
+						pagesToVisit.addAll(crawlPage.crawl(
 								getHtmlDoc(currentUrl), keyword));
 					}
 				} catch (Exception e) {
@@ -67,13 +59,13 @@ public class CrawlerThread implements Runnable {
 							e);
 				}
 
-				logger.debug("\n**Done** Visited " + this.pagesVisited.size()
+				logger.debug("\n**Done** Visited " + pagesVisited.size()
 						+ " web page(s)");
-				logger.debug("\nTo Visit pages " + this.pagesToVisit.size()
+				logger.debug("\nTo Visit pages " + pagesToVisit.size()
 						+ " web page(s)");
-			} while (!this.pagesToVisit.isEmpty());
+			} while (!pagesToVisit.isEmpty());
 		} catch (Exception e) {
-			logger.debug("Exception in getting teh next url", e);
+			logger.debug("Exception in getting the next url", e);
 		}
 
 	}
