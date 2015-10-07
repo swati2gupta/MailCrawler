@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 public class DownloadFileThread implements Download, Runnable {
 	protected static BlockingQueue<String> downloadedQueue = null;
-	final static Logger logger = Logger.getLogger(DownloadFile.class);
+	final static Logger logger = Logger.getLogger(DownloadFileThread.class);
 	Properties configFile = new Properties();
 
 	public DownloadFileThread(BlockingQueue<String> downloadQueue) {
@@ -20,8 +20,10 @@ public class DownloadFileThread implements Download, Runnable {
 	}
 
 	public void run() {
+		logger.debug("Staring the downloader thread ...");
 		try {
 			String currentUrl = downloadedQueue.take();
+			logger.debug("downloader Thread" + Thread.currentThread().getName());
 			try {
 				configFile.load(Crawler.class.getClassLoader()
 

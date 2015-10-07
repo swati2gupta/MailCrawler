@@ -1,6 +1,7 @@
 package com.pramati.crawler;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
@@ -12,7 +13,7 @@ public class CrawlerThread implements Runnable {
 	protected static BlockingQueue<String> pagesToVisit = null;
 	protected static BlockingQueue<String> downloadQueue = null;
 	protected static Set<String> pagesVisited = null;
-	final static Logger logger = Logger.getLogger(Crawler.class);
+	final static Logger logger = Logger.getLogger(CrawlerThread.class);
 
 	public CrawlerThread(BlockingQueue<String> urlQueue,
 			Set<String> visitedQueue, BlockingQueue<String> downlQueue) {
@@ -23,7 +24,8 @@ public class CrawlerThread implements Runnable {
 
 	public void run() {
 		try {
-			String currentUrl = pagesToVisit.take();
+			logger.debug("Thread" + Thread.currentThread().getName());
+			String currentUrl = nextUrl();
 			pagesVisited.add(currentUrl);
 			search(currentUrl, "2014");
 		} catch (Exception e) {
@@ -49,9 +51,10 @@ public class CrawlerThread implements Runnable {
 									"Exception in opening properties file", e);
 						}
 
-					} else {
+					} else { logger.debug("in else");
 						pagesToVisit.addAll(crawlPage.crawl(
 								getHtmlDoc(currentUrl), keyword));
+						logger.debug(pagesToVisit.size());
 					}
 				} catch (Exception e) {
 					logger.error(
@@ -73,5 +76,18 @@ public class CrawlerThread implements Runnable {
 	public Document getHtmlDoc(String url) throws IOException {
 		Document document = Jsoup.connect(url).get();
 		return document;
+	}
+	
+	public String nextUrl() throws Exception{
+		String nextUrl;
+		//Iterator<String> it = pagesToVisit.iterator();
+		//nextUrl=it.next().toString();
+	    do 
+	    {
+	    	nextUrl=pagesToVisit.take();
+	    }while(pagesVisited.contains(nextUrl));
+	    
+	    pagesVisited.add(nextUrl);
+		return nextUrl;
 	}
 }

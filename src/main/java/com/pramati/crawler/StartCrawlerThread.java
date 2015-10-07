@@ -14,7 +14,7 @@ public class StartCrawlerThread {
 	static BlockingQueue<String> urlQueue = new LinkedBlockingQueue<String>();
 	static BlockingQueue<String> downloadQueue = new LinkedBlockingQueue<String>();
 	static Set<String> visitedQueue = new HashSet<String>();
-	final static Logger logger = Logger.getLogger(StartCrawler.class);
+	final static Logger logger = Logger.getLogger(StartCrawlerThread.class);
 
 	public static void main(String args[]) {
 		try {
@@ -22,21 +22,24 @@ public class StartCrawlerThread {
 			Scanner scanner = new Scanner(System.in);
 			String URL = scanner.next();
 			urlQueue.put(URL);
-			ExecutorService executor = Executors.newFixedThreadPool(5);
+			ExecutorService executor = Executors.newFixedThreadPool(10);
 			for (int i = 0; i < 5; i++) {
 				Runnable worker = new CrawlerThread(urlQueue, visitedQueue,
 						downloadQueue);
 				executor.execute(worker);
 			}
-			executor.shutdown();
-
-			ExecutorService downexecutor = Executors.newFixedThreadPool(5);
 			for (int i = 0; i < 5; i++) {
-				Runnable worker = new DownloadFileThread(downloadQueue);
-				downexecutor.execute(worker);
+				Runnable downloaderWorker = new DownloadFileThread(downloadQueue);
+				executor.execute(downloaderWorker);
 			}
-			downexecutor.shutdown();
-			while (!executor.isTerminated() && downexecutor.isTerminated()) {
+			/*ExecutorService downexecutor = Executors.newFixedThreadPool(5);
+			for (int i = 0; i < 5; i++) {
+				Runnable worker1 = new DownloadFileThread(downloadQueue);
+				downexecutor.execute(worker1);
+			}*/
+			executor.shutdown();
+			//downexecutor.shutdown();!downexecutor.isTerminated()
+			while (!executor.isTerminated()) {
 			}
 
 			System.out.println("Finished all threads");
