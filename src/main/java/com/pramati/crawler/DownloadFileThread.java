@@ -21,24 +21,37 @@ public class DownloadFileThread implements Download, Runnable {
 
 	public void run() {
 		logger.debug("Staring the downloader thread ...");
-		try {
-			String currentUrl = downloadedQueue.take();
-			logger.debug("downloader Thread" + Thread.currentThread().getName());
+		logger.debug("size" +downloadedQueue.size());
+		/*while (downloadedQueue.isEmpty()) {
+	         try {
+	            Thread.sleep(1000);
+	         }
+	         catch (InterruptedException e) {
+	         }
+	      }*/
+		while (true) {
 			try {
-				configFile.load(Crawler.class.getClassLoader()
+				String currentUrl = downloadedQueue.take();
+				
+				logger.debug("downloader Thread"
+						+ Thread.currentThread().getName());
+				try {
+					configFile.load(Crawler.class.getClassLoader()
 
-				.getResourceAsStream("config.properties"));
-				String dpath = configFile.getProperty("downloadPath");
-				String libfile = dpath
-						+ "2014"
-						+ currentUrl.substring(currentUrl.indexOf("@") - 15,
-								currentUrl.indexOf("@") - 3);
-				downloadMail(currentUrl, libfile, ".txt");
+					.getResourceAsStream("config.properties"));
+					String dpath = configFile.getProperty("downloadPath");
+					String libfile = dpath
+							+ "2014"
+							+ currentUrl.substring(
+									currentUrl.indexOf("@") - 15,
+									currentUrl.indexOf("@") - 3);
+					downloadMail(currentUrl, libfile, ".txt");
+				} catch (Exception e) {
+					logger.error("Exception in opening properties file", e);
+				}
 			} catch (Exception e) {
-				logger.error("Exception in opening properties file", e);
+				logger.error("Exception in getting the next URl", e);
 			}
-		} catch (Exception e) {
-			logger.error("Exception in getting the next URl", e);
 		}
 	}
 

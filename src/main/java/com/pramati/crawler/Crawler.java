@@ -86,7 +86,7 @@ public class Crawler {
 	    {
 	    	nextUrl=it.next().toString();
 	    	it.remove();
-	    }while(this.pagesVisited.contains(nextUrl));
+	    }while(this.pagesVisited.contains(nextUrl) );
 	    
 	    this.pagesVisited.add(nextUrl);
 		return nextUrl;

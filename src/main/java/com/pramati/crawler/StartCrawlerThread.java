@@ -29,16 +29,12 @@ public class StartCrawlerThread {
 				executor.execute(worker);
 			}
 			for (int i = 0; i < 5; i++) {
-				Runnable downloaderWorker = new DownloadFileThread(downloadQueue);
+				Runnable downloaderWorker = new DownloadFileThread(
+						downloadQueue);
 				executor.execute(downloaderWorker);
 			}
-			/*ExecutorService downexecutor = Executors.newFixedThreadPool(5);
-			for (int i = 0; i < 5; i++) {
-				Runnable worker1 = new DownloadFileThread(downloadQueue);
-				downexecutor.execute(worker1);
-			}*/
+
 			executor.shutdown();
-			//downexecutor.shutdown();!downexecutor.isTerminated()
 			while (!executor.isTerminated()) {
 			}
 

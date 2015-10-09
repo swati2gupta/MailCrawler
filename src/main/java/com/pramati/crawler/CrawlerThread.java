@@ -1,7 +1,7 @@
 package com.pramati.crawler;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
@@ -13,21 +13,23 @@ public class CrawlerThread implements Runnable {
 	protected static BlockingQueue<String> pagesToVisit = null;
 	protected static BlockingQueue<String> downloadQueue = null;
 	protected static Set<String> pagesVisited = null;
+	Set<String> link = new HashSet<String>();
 	final static Logger logger = Logger.getLogger(CrawlerThread.class);
 
 	public CrawlerThread(BlockingQueue<String> urlQueue,
-			Set<String> visitedQueue, BlockingQueue<String> downlQueue) {
+			Set<String> visitedSet, BlockingQueue<String> downlQueue) {
 		pagesToVisit = urlQueue;
-		pagesVisited = visitedQueue;
+		pagesVisited = visitedSet;
 		downloadQueue = downlQueue;
 	}
 
 	public void run() {
 		try {
-			logger.debug("Thread" + Thread.currentThread().getName());
-			String currentUrl = nextUrl();
-			pagesVisited.add(currentUrl);
-			search(currentUrl, "2014");
+			while (!pagesToVisit.isEmpty()) {
+				logger.debug("Thread" + Thread.currentThread().getName());
+				String currentUrl = nextUrl();
+				search(currentUrl, "2014");
+			}
 		} catch (Exception e) {
 			logger.error("Exception in getting the next URl", e);
 		}
@@ -35,38 +37,32 @@ public class CrawlerThread implements Runnable {
 
 	public void search(String url, String keyword) {
 		try {
-			do {
-				String currentUrl = url;
-				PageParser crawlPage = new PageParser();
-				logger.debug("Current url:" + currentUrl);
-				try {
-					boolean success = crawlPage.searhForMail(
-							getHtmlDoc(currentUrl), keyword);
-					logger.debug("search for mail true or false" + success);
-					if (success) {
-						try {
-							downloadQueue.add(currentUrl);
-						} catch (Exception e) {
-							logger.error(
-									"Exception in opening properties file", e);
-						}
-
-					} else { logger.debug("in else");
-						pagesToVisit.addAll(crawlPage.crawl(
-								getHtmlDoc(currentUrl), keyword));
-						logger.debug(pagesToVisit.size());
-					}
-				} catch (Exception e) {
-					logger.error(
-							"Exception in getting HTML document from teh URL",
-							e);
+			String currentUrl = url;
+			PageParser crawlPage = new PageParser();
+			logger.debug("Current url:" + currentUrl);
+			try {
+				boolean success = crawlPage.searhForMail(
+						getHtmlDoc(currentUrl), keyword);
+				logger.debug("search for mail true or false" + success);
+				if (success) {
+					downloadQueue.put(currentUrl);
+				} else {
+					logger.debug("in else");
+					link = crawlPage.crawl(getHtmlDoc(currentUrl), keyword);
+					for (String s : link)
+						pagesToVisit.put(s);
 				}
+			} catch (Exception e) {
+				logger.error("Exception in getting HTML document from teh URL",
+						e);
+			}
 
-				logger.debug("\n**Done** Visited " + pagesVisited.size()
-						+ " web page(s)");
-				logger.debug("\nTo Visit pages " + pagesToVisit.size()
-						+ " web page(s)");
-			} while (!pagesToVisit.isEmpty());
+			logger.debug("\n**Done** Visited " + pagesVisited.size()
+					+ " web page(s)");
+			logger.debug("\nTo Visit pages " + pagesToVisit.size()
+					+ " web page(s)");
+			logger.debug("\ndownload Queue" + downloadQueue.size()
+					+ " web page(s)");
 		} catch (Exception e) {
 			logger.debug("Exception in getting the next url", e);
 		}
@@ -77,17 +73,13 @@ public class CrawlerThread implements Runnable {
 		Document document = Jsoup.connect(url).get();
 		return document;
 	}
-	
-	public String nextUrl() throws Exception{
+
+	public String nextUrl() throws Exception {
 		String nextUrl;
-		//Iterator<String> it = pagesToVisit.iterator();
-		//nextUrl=it.next().toString();
-	    do 
-	    {
-	    	nextUrl=pagesToVisit.take();
-	    }while(pagesVisited.contains(nextUrl));
-	    
-	    pagesVisited.add(nextUrl);
+		do {
+			nextUrl = pagesToVisit.take();
+		} while (pagesVisited.contains(nextUrl) && !pagesToVisit.isEmpty());
+		pagesVisited.add(nextUrl);
 		return nextUrl;
 	}
 }
