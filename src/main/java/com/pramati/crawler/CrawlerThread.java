@@ -15,7 +15,7 @@ public class CrawlerThread implements Runnable {
 	protected static Set<String> pagesVisited = null;
 	Set<String> link = new HashSet<String>();
 	final static Logger logger = Logger.getLogger(CrawlerThread.class);
-
+	//static boolean finishedcrawler=false;
 	public CrawlerThread(BlockingQueue<String> urlQueue,
 			Set<String> visitedSet, BlockingQueue<String> downlQueue) {
 		pagesToVisit = urlQueue;

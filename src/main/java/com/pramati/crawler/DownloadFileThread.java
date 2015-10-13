@@ -14,10 +14,27 @@ public class DownloadFileThread implements Download, Runnable {
 	protected static BlockingQueue<String> downloadedQueue = null;
 	final static Logger logger = Logger.getLogger(DownloadFileThread.class);
 	Properties configFile = new Properties();
-
-	public DownloadFileThread(BlockingQueue<String> downloadQueue) {
+	//protected static BlockingQueue<String> pagesToVisit = null;
+	static boolean finishedcrawler;
+	public DownloadFileThread(BlockingQueue<String> downloadQueue ,boolean isCrawlerFinished) {
 		downloadedQueue = downloadQueue;
+		//pagesToVisit=urlQueue;
+		finishedcrawler=isCrawlerFinished;
 	}
+	
+	
+
+	public static void setFinishedcrawler(Boolean val) {
+		finishedcrawler = val;
+	}
+
+
+
+	public static void setFinishedcrawler(boolean finishedcrawler) {
+		DownloadFileThread.finishedcrawler = finishedcrawler;
+	}
+
+
 
 	public void run() {
 		logger.debug("Staring the downloader thread ...");
@@ -29,7 +46,8 @@ public class DownloadFileThread implements Download, Runnable {
 	         catch (InterruptedException e) {
 	         }
 	      }*/
-		while (true) {
+		//!downloadedQueue.isEmpty() && !pagesToVisit.isEmpty()
+		while (!finishedcrawler) {
 			try {
 				String currentUrl = downloadedQueue.take();
 				
