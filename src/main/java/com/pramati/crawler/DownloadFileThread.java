@@ -15,39 +15,38 @@ public class DownloadFileThread implements Download, Runnable {
 	final static Logger logger = Logger.getLogger(DownloadFileThread.class);
 	Properties configFile = new Properties();
 	//protected static BlockingQueue<String> pagesToVisit = null;
-	static boolean finishedcrawler;
-	public DownloadFileThread(BlockingQueue<String> downloadQueue ,boolean isCrawlerFinished) {
+	//volatile static boolean finishedcrawler=false;
+	//public boolean downloading=false;
+	public DownloadFileThread(BlockingQueue<String> downloadQueue ) {
 		downloadedQueue = downloadQueue;
 		//pagesToVisit=urlQueue;
-		finishedcrawler=isCrawlerFinished;
+		//finishedcrawler=isCrawlerFinished;
 	}
 	
 	
-
-	public static void setFinishedcrawler(Boolean val) {
-		finishedcrawler = val;
-	}
-
-
-
-	public static void setFinishedcrawler(boolean finishedcrawler) {
-		DownloadFileThread.finishedcrawler = finishedcrawler;
-	}
+	//public static void setFinishedcrawler(boolean val) {
+		//		finishedcrawler = val;
+	//}
 
 
 
 	public void run() {
 		logger.debug("Staring the downloader thread ...");
 		logger.debug("size" +downloadedQueue.size());
-		/*while (downloadedQueue.isEmpty()) {
-	         try {
-	            Thread.sleep(1000);
-	         }
-	         catch (InterruptedException e) {
-	         }
-	      }*/
+		//while (downloadedQueue.isEmpty()) {try{wait();}catch(Exception e){logger.error("Exception", e);}}
+		//downloading=true;
+		//logger.debug("after while size" +downloadedQueue.size());
+		//while (downloadedQueue.size()<40) {
+	       //  try {
+	         //   Thread.sleep(100000);
+	        // }
+	        // catch (InterruptedException e) {
+	        // }
+	    //  }
+		//logger.debug("after while size" +downloadedQueue.size());
 		//!downloadedQueue.isEmpty() && !pagesToVisit.isEmpty()
-		while (!finishedcrawler) {
+		//logger.debug("value of set finsihed" + finishedcrawler);
+		while( true){
 			try {
 				String currentUrl = downloadedQueue.take();
 				
@@ -71,6 +70,7 @@ public class DownloadFileThread implements Download, Runnable {
 				logger.error("Exception in getting the next URl", e);
 			}
 		}
+		//while (!DownloadFileThread.finishedcrawler) ;
 	}
 
 	public void downloadMail(String url, String pathg, String format) {
@@ -108,4 +108,7 @@ public class DownloadFileThread implements Download, Runnable {
 
 		}
 	}
+
+
+	
 }

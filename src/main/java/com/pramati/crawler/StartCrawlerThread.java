@@ -21,26 +21,28 @@ public class StartCrawlerThread {
 			Scanner scanner = new Scanner(System.in);
 			String URL = scanner.next();
 			urlQueue.put(URL);
-			ExecutorService executor = Executors.newFixedThreadPool(5);
-			ExecutorService downexecutor = Executors.newFixedThreadPool(5);
-			for (int i = 0; i < 5; i++) {
-				Runnable worker = new CrawlerThread(urlQueue, visitedQueue,
-						downloadQueue);
+			//logger.debug("url size" + urlQueue.size());
+			ExecutorService executor = Executors.newFixedThreadPool(10);
+			//ExecutorService downexecutor = Executors.newFixedThreadPool(5);
+			for (int i = 0; i < 10; i++) {
+				Runnable worker = new CrawlerThread(urlQueue, visitedQueue,downloadQueue);
+				Runnable downloaderWorker = new DownloadFileThread(downloadQueue);
 				executor.execute(worker);
+				executor.execute(downloaderWorker);
 			}
-			for (int i = 0; i < 5; i++) {
-				Runnable downloaderWorker = new DownloadFileThread(downloadQueue,false);
-				downexecutor.execute(downloaderWorker);
-			}
-
+			
+			//logger.debug("url size" + urlQueue.size());
+			
+			
 			executor.shutdown();
-			downexecutor.shutdown();
+			
+			
 			while (!executor.isTerminated()) {
 				
 			}
-			setFinishedcrawler(true);
-			while (!downexecutor.isTerminated()) {
-			}
+			//DownloadFileThread.setFinishedcrawler(true);	
+			//while (!downexecutor.isTerminated()) {
+			//}
 			System.out.println("Finished all threads");
 			scanner.close();
 		} catch (Exception e) {
