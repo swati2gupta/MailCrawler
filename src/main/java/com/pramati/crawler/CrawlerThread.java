@@ -14,9 +14,8 @@ public class CrawlerThread implements Runnable {
 	protected static BlockingQueue<String> downloadQueue = null;
 	protected static Set<String> pagesVisited = null;
 	Set<String> link = new HashSet<String>();
-	boolean crawling=false;
 	final static Logger logger = Logger.getLogger(CrawlerThread.class);
-	//static boolean finishedcrawler=false;
+
 	public CrawlerThread(BlockingQueue<String> urlQueue,
 			Set<String> visitedSet, BlockingQueue<String> downlQueue) {
 		pagesToVisit = urlQueue;
@@ -25,23 +24,19 @@ public class CrawlerThread implements Runnable {
 	}
 
 	public void run() {
-		crawling=true;
 		try {
-			//!pagesToVisit.isEmpty()
-			while (crawling && pagesToVisit.size()>0) {
+			while (pagesToVisit.isEmpty()) {
+				Thread.sleep(10);
+			}
+			while (!pagesToVisit.isEmpty()) {
 				logger.debug("Thread" + Thread.currentThread().getName());
 				String currentUrl = nextUrl();
 				search(currentUrl, "2014");
-				
 			}
-			//if(crawling && pagesToVisit.isEmpty())
-				//DownloadFileThread.setFinishedcrawler(true);
-			//else
-				//DownloadFileThread.setFinishedcrawler(false);
 		} catch (Exception e) {
 			logger.error("Exception in getting the next URl", e);
 		}
-		
+		logger.debug(" i am out of while");
 	}
 
 	public void search(String url, String keyword) {
@@ -55,7 +50,6 @@ public class CrawlerThread implements Runnable {
 				logger.debug("search for mail true or false" + success);
 				if (success) {
 					downloadQueue.put(currentUrl);
-					//notifyAll();
 				} else {
 					logger.debug("in else");
 					link = crawlPage.crawl(getHtmlDoc(currentUrl), keyword);

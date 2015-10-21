@@ -18,7 +18,7 @@ public class PageParserThread {
 	{
 		pagesToVisit=toVisitPages;
 	}
-
+	
 	public void crawl(Document url, String searchWord)
 			throws IOException {
 		try {
@@ -28,7 +28,8 @@ public class PageParserThread {
 		} catch (IOException e) {
 			logger.error("Exception in opening properties file", e);
 		}
-
+		
+		// ** to check the url is inside the domain only**
 		Elements linksOnPage = url.select("a[href]");
 		String domainchk = configFile.getProperty("domain") + searchWord;
 		logger.debug("Links found on current page: " + linksOnPage.size()
@@ -50,7 +51,6 @@ public class PageParserThread {
 
 		String patternToMatch = searchWord;
 		String htmlString = doc.toString();
-		// System.out.println("document" + htmlString);
 		IMailFilter filter = new DateBasedFilter();
 		if (filter.evaluate(patternToMatch, htmlString)) {
 			logger.debug("keyword found in the page");
@@ -60,14 +60,5 @@ public class PageParserThread {
 		return result;
 	}
 
-	/*
-	 * public boolean parsePage(String url, String searchWord) throws
-	 * IOException { Document doc=getHtmlDoc(url); Boolean result=false;
-	 * Elements linksOnPage = doc.select("a[href]"); if(linksOnPage.size()==0) {
-	 * String patternToMatch = searchWord; String htmlString = doc.toString();
-	 * IMailFilter filter = new DateBasedFilter(); if
-	 * (filter.evaluate(patternToMatch, htmlString)) {
-	 * logger.debug("keyword found in the page"); result=true; } } return
-	 * result; }
-	 */
+	
 }

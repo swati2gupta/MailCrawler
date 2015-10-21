@@ -3,13 +3,12 @@ package com.pramati.crawler;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
-import java.util.Properties;
 
 public class Crawler {
 	private Set<String> pagesVisited = new HashSet<String>();
@@ -28,7 +27,6 @@ public class Crawler {
 		do {
 			String currentUrl;
 			PageParser crawlPage = new PageParser();
-			// Document doc=getHtmldoc(currentUrl);
 			if (this.pagesToVisit.isEmpty()) {
 				currentUrl = url;
 				this.pagesVisited.add(url);
@@ -81,7 +79,6 @@ public class Crawler {
 	private String nextUrl()  throws Exception{
 		String nextUrl;
 		Iterator<String> it = this.pagesToVisit.iterator();
-		//nextUrl=it.next().toString();
 	    do 
 	    {
 	    	nextUrl=it.next().toString();

@@ -47,7 +47,6 @@ public class PageParser {
 
 		String patternToMatch = searchWord;
 		String htmlString = doc.toString();
-		// System.out.println("document" + htmlString);
 		IMailFilter filter = new DateBasedFilter();
 		if (filter.evaluate(patternToMatch, htmlString)) {
 			logger.debug("keyword found in the page");
@@ -57,14 +56,4 @@ public class PageParser {
 		return result;
 	}
 
-	/*
-	 * public boolean parsePage(String url, String searchWord) throws
-	 * IOException { Document doc=getHtmlDoc(url); Boolean result=false;
-	 * Elements linksOnPage = doc.select("a[href]"); if(linksOnPage.size()==0) {
-	 * String patternToMatch = searchWord; String htmlString = doc.toString();
-	 * IMailFilter filter = new DateBasedFilter(); if
-	 * (filter.evaluate(patternToMatch, htmlString)) {
-	 * logger.debug("keyword found in the page"); result=true; } } return
-	 * result; }
-	 */
 }
