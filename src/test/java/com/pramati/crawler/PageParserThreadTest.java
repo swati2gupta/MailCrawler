@@ -2,13 +2,19 @@ package com.pramati.crawler;
 
 import static org.junit.Assert.*;
 
+import java.util.concurrent.BlockingQueue;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Test;
 
 public class PageParserThreadTest {
-
+	protected static BlockingQueue<String> pagesToVisit = null;
+	PageParserThread pageParser=new PageParserThread(pagesToVisit);
 	@Test
+	
 	public void testPageParserThread() {
-		fail("Not yet implemented");
+		assertEquals(pagesToVisit,pageParser.pagesToVisit);
 	}
 
 	@Test
@@ -18,7 +24,16 @@ public class PageParserThreadTest {
 
 	@Test
 	public void testSearhForMail() {
-		fail("Not yet implemented");
+		String url="http://mail-archives.apache.org/mod_mbox/maven-users/201412.mbox/raw/%3C547C1A5F.7070709%40uni-jena.de%3E";
+		try
+		{
+		Document document = Jsoup.connect(url).get();
+		assertEquals(true,pageParser.searhForMail(document, "2014"));
+		}
+		catch(Exception e)
+		{
+			System.out.println("exception" + e);
+		}
 	}
 
 }

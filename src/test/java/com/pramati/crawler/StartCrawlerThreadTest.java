@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class StartCrawlerThreadTest {
-
+	StartCrawlerThread startCrawler=new StartCrawlerThread();
 	@Test
 	public void testMain() {
-		fail("Not yet implemented");
+		startCrawler.main();
 	}
 
 }

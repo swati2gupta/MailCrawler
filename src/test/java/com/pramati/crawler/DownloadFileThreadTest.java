@@ -2,18 +2,23 @@ package com.pramati.crawler;
 
 import static org.junit.Assert.*;
 
+import java.util.concurrent.BlockingQueue;
+
 import org.junit.Test;
 
-public class DownloadFileThreadTest {
 
+public class DownloadFileThreadTest {
+	protected static BlockingQueue<String> downloadedQueue = null;
+	DownloadFileThread down=new DownloadFileThread(downloadedQueue);
 	@Test
 	public void testDownloadFileThread() {
-		fail("Not yet implemented");
+		 assertEquals(downloadedQueue,down.downloadedQueue);
 	}
 
 	@Test
 	public void testSetFinishedcrawler() {
-		fail("Not yet implemented");
+		DownloadFileThread.setFinishedcrawler(true);
+		assertEquals(true,DownloadFileThread.finishedcrawler);
 	}
 
 	@Test
